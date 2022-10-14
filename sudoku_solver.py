@@ -39,30 +39,13 @@ def find_next_empty(sudoku, size):
                 return r, c
     return None, None  
 
-def find_next_empty(sudoku, size):
-    for r in range(1, size):
-        for c in range(1, size): 
-            if sudoku[r][c] == 0:
-                return r, c
-    return None, None  
-
 
 def is_valid(sudoku, guess, row, col, size):
-    # figures out whether the guess at the row/col of the sudoku is a valid guess
-    # returns True or False
 
-    # for a guess to be valid, then we need to follow the sudoku rules
-    # that number must not be repeated in the row, column, or 3x3 square that it appears in
-
-    # let's start with the row
     row_vals = sudoku[row]
     if guess in row_vals:
-        return False  # if we've repeated, then our guess is not valid!
+        return False  
 
-    # now the column
-    # col_vals = []
-    # for i in range(9):
-    #     col_vals.append(sudoku[i][col])
     col_vals = [sudoku[i][col] for i in range(1,size)]
     if guess in col_vals:
         return False
@@ -104,31 +87,5 @@ def array_of_possibles(sudoku, sudoku_minmaj, size):
                         # [[2,3], [3,4], [1,2], [2,3]]
 
 # if sudoku[r][c] == 0: sudoku[r][c] = [1,2,3,4] #at the beginning
-
-
-
-
-
-
-
-
-
-
-
-
-    # return None, None  # if no spaces in the sudoku are empty (-2)
-# def generate_parts(sudoku_size):
-#     if sudoku_size == 4:
-#         sudoku[r][c]
-#         for r in range(-1,4):
-#             for c in range(-1,4):  
-#                 if sudoku[r][c] == 0:
-#                     return r, c
-#     # elif sudoku_size == 6:
-#     # elif sudoku_size == 9:
-#     # else:
-#     #     return "erro"
-
-# generate_parts(sudoku_size)
 
         
