@@ -1,37 +1,5 @@
 import numpy as np
 
-# sudoku_4 = np.array([[0, -2, 0, 0, -2, 0],
-#                    [-1, -5, -2, -2, -5, -1],
-#                    [0, -2, 0, 0, -1, 0],
-#                    [0, -1, 0, 0, -2, 0],
-#                    [-1, -5, -2, -2, -5, -1],
-#                    [0, -1, 0, 0, -1, 0]]
-
-# sudoku_6 = np.array([[0, -2, 0, 0, -2, 0],
-#                    [-1, -5, -2, -2, -5, -1],
-#                    [0, -2, 0, 0, -1, 0],
-#                    [-1, -5, -2, -2, -5, -1],
-#                    [0, -2, 0, 0, -1, 0],
-#                    [0, -1, 0, 0, -2, 0],
-#                    [-1, -5, -2, -2, -5, -1],
-#                    [0, -1, 0, 0, -1, 0],
-#                    [-1, -5, -2, -2, -5, -1],
-#                    [0, -2, 0, 0, -1, 0]])
-
-sudoku4 = np.array([[0, 0, 0, 0],
-            [0, 0, 0, 0],
-            [0, 0, 0, 0],
-            [0, 0, 0, 0]])
-sudoku4_minmaj = np.array([[-1, 0, -1, 0], 
-            [1, -1, -1, 1],
-            [-1, 0, 1, 0],
-            [1, 0, -1, 0],
-            [1, -1, -1, 1],
-            [1, 0, 1, 0]])
-
-
-print(sudoku4, sudoku4_minmaj)
-
 def find_next_empty(sudoku, size):
     for r in range(1, size):
         for c in range(1, size): 
@@ -40,7 +8,7 @@ def find_next_empty(sudoku, size):
     return None, None  
 
 
-def is_valid(sudoku, guess, row, col, size):
+def is_valid(sudoku, guess, row, col, size, sudoku_minmaj):
 
     row_vals = sudoku[row]
     if guess in row_vals:
@@ -54,38 +22,61 @@ def is_valid(sudoku, guess, row, col, size):
         row_start = (row // 2) * 2  
         col_start = (col // 2) * 2
 
-        for r in range(row_start, row_start + 2):
-            for c in range(col_start, col_start + 2):
-                if sudoku[r][c] == guess:
-                    return False
+    for r in range(row_start, row_start + 2):
+        for c in range(col_start, col_start + 2):
+            if sudoku[r][c] == guess:
+                return False
 
-    # # and then the square
-    # row_start = (row // 3) * 3  # 10 // 3 = 3, 5 // 3 = 1, 1 // 3 = 0
-    # col_start = (col // 3) * 3
-
-    # for r in range(row_start, row_start + 3):
-    #     for c in range(col_start, col_start + 3):
-    #         if sudoku[r][c] == guess:
-    #             return False
-
+    for r in range(1, size):
+        for c in range(1, size):
+            for sym in sudoku_minmaj[r][c]:
+                print(sudoku4_minmaj[0][0])
+                if sym[0] == -1:
+                    if sudoku[r][c-1] < sudoku[r][c]:
+                        return False
+                elif sym[1] == -1:
+                    if sudoku[r-1][c] < sudoku[r][c]:
+                        return False
+                elif sym[0] == 1:
+                    if sudoku[r][c-1] > sudoku[r][c]:
+                        return False
+                elif sym[1] == 1:
+                    if sudoku[r-1][c] > sudoku[r][c]:
+                        return False
+                else:
+                    continue
     return True
 
-def array_of_possibles(sudoku, sudoku_minmaj, size):
-    minmaj = []
-    for r in range(size):
-        for c in range(size):
-            for r_minmaj in range(sudoku_minmaj.size[0]):
-                for c_minmaj in range(sudoku_minmaj.size[1]):
-                    if sudoku_minmaj == 1 or sudoku_minmaj == -1:
-                        minmaj.append(sudoku_minmaj[r][c])
-                        minmaj.append(sudoku_minmaj[r+1][c])
 
-                        sudoku[r][c] = minmaj
-                        #ideia aqui é que o sudoku se torne os possiveis valores
+def solve_sudoku(sudoku, sudoku_minmaj, size):
 
-                        # ex:
-                        # [[2,3], [3,4], [1,2], [2,3]]
+    print(sudoku_minmaj)
 
-# if sudoku[r][c] == 0: sudoku[r][c] = [1,2,3,4] #at the beginning
+    row, col = find_next_empty(sudoku, size)
 
-        
+    if row is None: 
+        return True
+
+    for guess in range(1, size):  
+        if is_valid(sudoku, guess, row, col, size, sudoku_minmaj):
+            sudoku[row][col] = guess
+            if solve_sudoku(sudoku):
+                return True
+
+        sudoku[row][col] = 0
+
+    return False
+
+
+sudoku4 = np.array([[0, 0, 0, 0],
+            [0, 0, 0, 0],
+            [0, 0, 0, 0],
+            [0, 0, 0, 0]])
+
+
+sudoku4_minmaj = np.array([[[0, 0], [1, 0], [0, 0], [1, 0]],
+                           [[0, -1], [1, 1], [0, 1], [-1, -1]],
+                           [[0, 0], [-1, 0], [0, 0], [1, 0]],
+                           [[0, -1], [-1, 1], [0, 1], [-1, -1]]])
+
+solve_sudoku(sudoku4, sudoku4_minmaj, 4)
